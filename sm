@@ -1,0 +1,1602 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TCM Spørgeskema – Online (HTML + tagoptælling)</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#111827;
+      --card2:#0f172a;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --line:#243041;
+      --accent:#60a5fa;
+      --accent2:#34d399;
+      --warn:#fbbf24;
+      --danger:#f87171;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:14px;
+      --pad:16px;
+      --gap:14px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(96,165,250,.25), transparent 60%),
+        radial-gradient(900px 500px at 100% 10%, rgba(52,211,153,.18), transparent 55%),
+        var(--bg);
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:rgba(11,15,20,.75);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid rgba(36,48,65,.6);
+    }
+    .header-inner{
+      max-width: 1260px;
+      margin:0 auto;
+      padding: 18px 18px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+    }
+    h1{
+      margin:0;
+      font-size:18px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+      max-width: 820px;
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+    button{
+      appearance:none;
+      border:1px solid rgba(36,48,65,.9);
+      background: linear-gradient(180deg, rgba(17,24,39,.9), rgba(15,23,42,.8));
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 10px;
+      font-weight:600;
+      font-size:13px;
+      cursor:pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,.25);
+    }
+    button:hover{ border-color: rgba(96,165,250,.65); }
+    button.secondary{ color:var(--muted); }
+    button.primary{ border-color: rgba(96,165,250,.7); }
+
+    .wrap{
+      max-width: 1260px;
+      margin: 18px auto 60px;
+      padding: 0 18px;
+      display:flex;
+      gap: 18px;
+      align-items:flex-start;
+    }
+    .left{
+      flex: 1 1 auto;
+      min-width: 560px;
+    }
+    .right{
+      flex: 0 0 360px;
+      position:sticky;
+      top: 92px;
+      max-height: calc(100vh - 110px);
+      overflow:auto;
+      padding-right: 6px;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(17,24,39,.92), rgba(15,23,42,.86));
+      border: 1px solid rgba(36,48,65,.85);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: var(--pad);
+      margin-bottom: 14px;
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      margin: 0 0 10px;
+      padding-bottom:10px;
+      border-bottom:1px solid rgba(36,48,65,.7);
+    }
+    .section-title h2{
+      font-size:15px;
+      margin:0;
+      font-weight:700;
+    }
+    .pill{
+      font-size:12px;
+      padding:4px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(36,48,65,.9);
+      color:var(--muted);
+      background: rgba(17,24,39,.45);
+      white-space:nowrap;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 1100px){
+      .wrap{ flex-direction:column; }
+      .right{ position:relative; top:0; flex-basis:auto; width:100%; max-height:none; }
+      .left{ min-width:auto; }
+    }
+    @media (max-width: 720px){
+      .grid{ grid-template-columns:1fr; }
+    }
+
+    label{
+      display:block;
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:6px;
+      font-weight:600;
+    }
+    input[type="text"], input[type="email"], input[type="tel"], input[type="number"], textarea, select{
+      width:100%;
+      border:1px solid rgba(36,48,65,.9);
+      border-radius: 10px;
+      padding: 10px 11px;
+      background: rgba(11,15,20,.55);
+      color: var(--text);
+      outline:none;
+      font-size:14px;
+    }
+    textarea{ min-height:92px; resize:vertical; }
+    .hint{
+      margin-top:6px;
+      font-size:12px;
+      color: rgba(156,163,175,.9);
+      line-height:1.35;
+    }
+
+    .options{
+      display:grid;
+      gap:8px;
+      margin-top: 8px;
+    }
+    .opt{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(36,48,65,.7);
+      background: rgba(11,15,20,.35);
+    }
+    .opt:hover{
+      border-color: rgba(96,165,250,.45);
+    }
+    .opt input{
+      margin-top:2px;
+      transform: scale(1.05);
+      accent-color: var(--accent);
+    }
+    .opt .txt{
+      font-size:13px;
+      line-height:1.35;
+      color: var(--text);
+    }
+    .opt .tags{
+      margin-top:5px;
+      font-size:12px;
+      color: var(--muted);
+    }
+    .divider{
+      height:1px;
+      background: rgba(36,48,65,.65);
+      margin: 12px 0;
+    }
+
+    .sidebar-title{
+      margin:0 0 10px;
+      font-size:14px;
+      font-weight:800;
+    }
+    .metric{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(36,48,65,.65);
+      background: rgba(11,15,20,.35);
+      margin-bottom: 8px;
+    }
+    .metric .name{
+      font-size:13px;
+      color: var(--text);
+      font-weight:700;
+    }
+    .metric .val{
+      font-variant-numeric: tabular-nums;
+      font-size:13px;
+      color: var(--muted);
+      font-weight:700;
+    }
+    .bar{
+      height:8px;
+      border-radius: 999px;
+      background: rgba(36,48,65,.65);
+      overflow:hidden;
+      margin-top:6px;
+    }
+    .bar > span{
+      display:block;
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(96,165,250,.85), rgba(52,211,153,.85));
+    }
+    .small{
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.35;
+    }
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    }
+
+    details{
+      border:1px solid rgba(36,48,65,.65);
+      border-radius: 12px;
+      padding:10px 12px;
+      background: rgba(11,15,20,.28);
+      margin-top: 10px;
+    }
+    summary{
+      cursor:pointer;
+      font-weight:800;
+      font-size:13px;
+      color: var(--text);
+    }
+    pre{
+      overflow:auto;
+      background: rgba(11,15,20,.55);
+      border:1px solid rgba(36,48,65,.7);
+      border-radius: 12px;
+      padding: 10px;
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .conditional{ display:none; }
+    .row{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid rgba(36,48,65,.65);
+      background: rgba(11,15,20,.35);
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size:12px;
+      font-weight:700;
+    }
+    .badge strong{ color: var(--text); }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="header-inner">
+    <div>
+      <h1>TCM SPØRGESKEMA – Fuld tekst (HTML) med tagoptælling & opsummeringskategorier</h1>
+      <div class="subtitle">
+        Udfyld venligst så grundigt, som du har mulighed for. Du kan springe spørgsmål over.
+        Optælling af TCM-tags og opsummerede kategorier opdateres løbende i højre side.
+      </div>
+    </div>
+    <div class="actions">
+      <button class="secondary" id="btnReset" type="button">Nulstil</button>
+      <button class="secondary" id="btnExport" type="button">Eksportér svar (JSON)</button>
+      <button class="primary" id="btnPrint" type="button">Print</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <main class="left" id="formRoot">
+
+    <!-- INTRO -->
+    <section class="card">
+      <div class="section-title">
+        <h2>Introduktion</h2>
+        <span class="pill">Læses før udfyldelse</span>
+      </div>
+      <div class="small">
+        Dine svar kan give vigtige indikationer på aktuelle tilstande og ubalancer.
+        Spørgeskemaet indeholder både åbne spørgsmål og afkrydsningsmuligheder.<br><br>
+        <strong>Vigtigt:</strong> Udfyld kun det, du føler dig tryg ved at dele. Du er altid velkommen til at springe spørgsmål over.
+        Når du er færdig, giver dine svar et samlet overblik over dine tilstande og eventuelle ubalancer.
+        Du har mulighed for at gemme dine svar og printe dem efterfølgende.
+      </div>
+    </section>
+
+    <!-- 1 -->
+    <section class="card" data-section="1">
+      <div class="section-title">
+        <h2>1. Personlige oplysninger</h2>
+        <span class="pill">Basis</span>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="name">Navn</label>
+          <input id="name" name="name" type="text" autocomplete="name" />
+        </div>
+        <div>
+          <label for="gender">Køn</label>
+          <input id="gender" name="gender" type="text" />
+        </div>
+        <div>
+          <label for="age">Alder</label>
+          <input id="age" name="age" type="number" min="0" />
+        </div>
+        <div>
+          <label for="phone">Telefonnummer</label>
+          <input id="phone" name="phone" type="tel" autocomplete="tel" />
+        </div>
+        <div>
+          <label for="email">E-mail</label>
+          <input id="email" name="email" type="email" autocomplete="email" />
+        </div>
+        <div>
+          <label for="address">Adresse</label>
+          <input id="address" name="address" type="text" autocomplete="street-address" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid">
+        <div>
+          <label for="gpName">Navn på din praktiserende læge</label>
+          <input id="gpName" name="gpName" type="text" />
+        </div>
+        <div>
+          <label for="gpPhone">Telefonnummer til din læge</label>
+          <input id="gpPhone" name="gpPhone" type="tel" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div>
+        <label>Arbejdssituation (sæt gerne flere kryds)</label>
+        <div class="options">
+          <label class="opt"><input type="checkbox" name="work" value="still" /><span class="txt">Overvejende stillesiddende arbejde</span></label>
+          <label class="opt"><input type="checkbox" name="work" value="repetitive" /><span class="txt">Arbejde med mange gentagende bevægelser</span></label>
+          <label class="opt"><input type="checkbox" name="work" value="physical" /><span class="txt">Fysisk krævende arbejde</span></label>
+          <label class="opt"><input type="checkbox" name="work" value="mixed" /><span class="txt">Varierende arbejde (både stillesiddende og fysisk)</span></label>
+          <label class="opt"><input type="checkbox" name="work" value="shift" /><span class="txt">Skifteholds- / natarbejde</span></label>
+          <label class="opt"><input type="checkbox" name="work" value="unemployed" /><span class="txt">Pt. ikke i arbejde</span></label>
+        </div>
+        <div class="hint">Bemærk: Arbejdssituationen tæller ikke i TCM-tags (medmindre du senere ønsker det).</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div>
+        <label for="workDesc">Evt. kort beskrivelse (frivilligt)</label>
+        <textarea id="workDesc" name="workDesc"></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid">
+        <div>
+          <label for="civil">Civilstand</label>
+          <select id="civil" name="civil">
+            <option value=""></option>
+            <option>Enlig</option>
+            <option>Samlevende</option>
+            <option>Gift</option>
+            <option>Andet</option>
+          </select>
+        </div>
+        <div>
+          <label for="kids">Har du børn?</label>
+          <select id="kids" name="kids">
+            <option value=""></option>
+            <option value="Nej">Nej</option>
+            <option value="Ja">Ja</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid conditional" id="kidsBlock" style="margin-top:12px;">
+        <div>
+          <label for="kidsCount">Antal børn</label>
+          <input id="kidsCount" name="kidsCount" type="number" min="0" />
+        </div>
+        <div>
+          <label for="kidsAges">Alder på børn (fx 3 år, 7 år, 15 år)</label>
+          <input id="kidsAges" name="kidsAges" type="text" />
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="card" data-section="2">
+      <div class="section-title">
+        <h2>2. Henvendelsesårsag</h2>
+        <span class="pill">Åbne svar</span>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="reason">Henvendelsesårsag</label>
+          <textarea id="reason" name="reason"></textarea>
+        </div>
+        <div>
+          <label for="symptoms">Hvilke gener giver det dig?</label>
+          <textarea id="symptoms" name="symptoms"></textarea>
+        </div>
+      </div>
+
+      <div class="grid" style="margin-top:12px;">
+        <div>
+          <label for="duration">Hvor lang tid har det stået på?</label>
+          <input id="duration" name="duration" type="text" />
+        </div>
+        <div>
+          <label for="prevAcup">Har du prøvet akupunktur før?</label>
+          <select id="prevAcup" name="prevAcup">
+            <option value=""></option>
+            <option value="Nej">Nej</option>
+            <option value="Ja">Ja</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid">
+        <div>
+          <label for="history">Tidligere sygdomme?</label>
+          <textarea id="history" name="history"></textarea>
+        </div>
+        <div>
+          <label for="ops">Har du fået foretaget operationer?</label>
+          <textarea id="ops" name="ops"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="card" data-section="3">
+      <div class="section-title">
+        <h2>3. Energi i løbet af dagen</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div class="small">Sæt gerne flere kryds, hvis flere udsagn passer.</div>
+      <div class="options">
+        <!-- Note: tags are encoded in data-tags; shown to user in small muted line -->
+        <label class="opt">
+          <input type="checkbox" class="tcm" data-tags="Qi-Xu,Yang-Xu,Xue-Xu" />
+          <span class="txt">Træthed som er værre efter aktivitet eller som kommer senere på dagen
+            <div class="tags">(Qi-Xu, Yang-Xu, Xue-Xu)</div>
+          </span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" class="tcm" data-tags="Yin-Xu" />
+          <span class="txt">Træthed som er værst om dagen men bedres om aftenen
+            <div class="tags">(Yin-Xu)</div>
+          </span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" />
+          <span class="txt">Træthed som er værst om morgenen og irritabel om morgenen
+            <div class="tags">(Lever-Qi-stagnation)</div>
+          </span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" class="tcm" data-tags="Fugt,Slim" />
+          <span class="txt">Træthed som er værst om morgenen og er tung og mentalt fraværende
+            <div class="tags">(Fugt, Slim)</div>
+          </span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" class="tcm" data-tags="Xu-tilstande" />
+          <span class="txt">Trætheden er værre efter anstrengelse
+            <div class="tags">(Xu-tilstande)</div>
+          </span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" class="tcm" data-tags="Qi-stagnation" />
+          <span class="txt">Træthed bedres efter aktivitet
+            <div class="tags">(Qi-stagnation)</div>
+          </span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" />
+          <span class="txt">Træthed ved manglende fysisk aktivitet
+            <div class="tags">(Lever-Qi-stagnation)</div>
+          </span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" class="tcm" data-tags="Nyre-Xu-ubalance" />
+          <span class="txt">Træthed er værre eller kommer efter sex
+            <div class="tags">(Nyre-Xu-ubalance)</div>
+          </span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" class="tcm" data-tags="Fugt" />
+          <span class="txt">Træthed ved fugtigt vejr
+            <div class="tags">(Fugt)</div>
+          </span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" />
+          <span class="txt">Træthed ved situationer man ikke gider
+            <div class="tags">(Lever-Qi-stagnation)</div>
+          </span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" class="tcm" data-tags="Milt-Qi-Xu" />
+          <span class="txt">Træthed efter måltider især tung mad
+            <div class="tags">(Milt-Qi-Xu)</div>
+          </span>
+        </label>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="card" data-section="4">
+      <div class="section-title">
+        <h2>4. Smerter</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="painYes">Har du smerter?</label>
+          <select id="painYes" name="painYes">
+            <option value=""></option>
+            <option value="Nej">Nej</option>
+            <option value="Ja">Ja</option>
+          </select>
+        </div>
+        <div>
+          <label for="painScale">Hvor stærke er smerterne (1–10)?</label>
+          <input id="painScale" name="painScale" type="number" min="0" max="10" />
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <label for="painWhere">Hvor sidder smerterne?</label>
+        <textarea id="painWhere" name="painWhere"></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="small">Sæt kryds hvor relevant.</div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-tilstande" /><span class="txt">Lindres ved tryk eller ved at holde på stedet<div class="tags">(Xu-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-tilstande" /><span class="txt">Forværres ved tryk<div class="tags">(Shi-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-stase" /><span class="txt">Skarpe eller borende smerter<div class="tags">(Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Kulde" /><span class="txt">Krampende eller bidende smerter<div class="tags">(Kulde)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme,Fugt-Varme" /><span class="txt">Brændende smerter<div class="tags">(Varme, Fugt-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt" /><span class="txt">Tyngende eller dumpe smerter<div class="tags">(Fugt)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-tilstande" /><span class="txt">Murrende eller dumpe smerter<div class="tags">(Xu-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Qi-stagnation" /><span class="txt">Spændthed<div class="tags">(Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Qi-stagnation" /><span class="txt">Smerter som kommer og går<div class="tags">(Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Vind" /><span class="txt">Smerter som flytter sig<div class="tags">(Vind)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-stase" /><span class="txt">Smerter som er lokaliseret<div class="tags">(Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme" /><span class="txt">Smerter som lindres ved kulde<div class="tags">(Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Kulde" /><span class="txt">Smerter som lindres ved varme<div class="tags">(Kulde)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-tilstande" /><span class="txt">Smerter som lindres ved hvile<div class="tags">(Xu-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-tilstande" /><span class="txt">Smerter som lindres ved bevægelse<div class="tags">(Shi-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-tilstande" /><span class="txt">Pludselige smerter<div class="tags">(Shi-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-tilstande" /><span class="txt">Gradvist opståede smerter<div class="tags">(Xu-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-stase" /><span class="txt">Smerter som er værre om natten<div class="tags">(Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Xu,Slim,Xue-stase" /><span class="txt">Sovende fornemmelse eller følelsesløshed<div class="tags">(Xue-Xu, Slim, Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Xu,Yin-Xu" /><span class="txt">Lægkramper om aftenen eller natten<div class="tags">(Xue-Xu, Yin-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Xu-ubalance" /><span class="txt">Ømhed, træthed eller stivhed i lænden og knæene<div class="tags">(Nyre-Xu-ubalance)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" /><span class="txt">Spændinger under ribbenskurvaturen<div class="tags">(Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation,Slim" /><span class="txt">Klump i halsen som ikke kan synkes<div class="tags">(Lever-Qi-stagnation, Slim)</div></span></label>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="card" data-section="5">
+      <div class="section-title">
+        <h2>5. Hovedpine</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="headacheYes">Har du ofte hovedpine?</label>
+          <select id="headacheYes" name="headacheYes">
+            <option value=""></option>
+            <option value="Nej">Nej</option>
+            <option value="Ja">Ja</option>
+          </select>
+        </div>
+        <div>
+          <label for="headacheNotes">Evt. beskrivelse (frivillig)</label>
+          <input id="headacheNotes" name="headacheNotes" type="text" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Invasion-af-xie-qi" /><span class="txt">Akut<div class="tags">(Invasion-af-xie-qi)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Opadstigende-Lever-Yang,Lever-Ild,Lever-Vind" /><span class="txt">Halvsidet<div class="tags">(Opadstigende-Lever-Yang, Lever-Ild, Lever-Vind)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Opadstigende-Lever-Yang,Lever-Ild,Lever-Vind" /><span class="txt">Tindingehovedpine<div class="tags">(Opadstigende-Lever-Yang, Lever-Ild, Lever-Vind)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-ubalancer,Xue-Xu,Qi-Xu" /><span class="txt">Hovedpine i toppen af hovedet<div class="tags">(Lever-ubalancer, Xue-Xu, Qi-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Xue-Xu,Opadstigende-Lever-Yang" /><span class="txt">Hovedpine bag øjnene<div class="tags">(Lever-Xue-Xu, Opadstigende-Lever-Yang)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Mave-ubalancer,Slim,Fugt" /><span class="txt">Pandehovedpine<div class="tags">(Mave-ubalancer, Slim, Fugt)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Vind-Kulde" /><span class="txt">Akut hovedpine i baghovedet<div class="tags">(Vind-Kulde)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Qi-stagnation,Xue-stase,Lever-Qi-stagnation" /><span class="txt">Hovedpine i baghovedet<div class="tags">(Qi-stagnation, Xue-stase, Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-tilstande" /><span class="txt">Hovedpine i hele hovedet<div class="tags">(Xu-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-stase" /><span class="txt">Lokaliseret hovedpine<div class="tags">(Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-tilstande" /><span class="txt">Pludselig hovedpine<div class="tags">(Shi-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-tilstande" /><span class="txt">Tom eller murrende hovedpine<div class="tags">(Xu-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Opadstigende-Lever-Yang,Lever-Ild,Vind-Varme,Slim" /><span class="txt">Dunkende hovedpine<div class="tags">(Opadstigende-Lever-Yang, Lever-Ild, Vind-Varme, Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt,Slim" /><span class="txt">Tung hovedpine<div class="tags">(Fugt, Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-stase" /><span class="txt">Borende eller jagende smerter<div class="tags">(Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" /><span class="txt">Opstår ved manglende aktivitet<div class="tags">(Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-tilstande" /><span class="txt">Opstår ved træthed eller overanstrengelse<div class="tags">(Xu-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Slim,Fugt" /><span class="txt">Opstår ved vejrskift<div class="tags">(Slim, Fugt)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-ubalancer" /><span class="txt">Udløses af stress<div class="tags">(Lever-ubalancer)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Xu-ubalance,Opadstigende-Lever-Yang" /><span class="txt">Udløses af sex<div class="tags">(Nyre-Xu-ubalance, Opadstigende-Lever-Yang)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-ubalancer" /><span class="txt">Hovedpine op til menstruation<div class="tags">(Lever-ubalancer)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Xu" /><span class="txt">Hovedpine efter menstruation<div class="tags">(Xue-Xu)</div></span></label>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="card" data-section="6">
+      <div class="section-title">
+        <h2>6. Mentale og emotionelle tilstande</h2>
+        <span class="pill">Delvis tags</span>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label>Generelt følelsesmæssigt velbefindende (flere mulige)</label>
+          <div class="options">
+            <label class="opt"><input type="checkbox" name="emoGeneral" /><span class="txt">Overvejende ro og balance</span></label>
+            <label class="opt"><input type="checkbox" name="emoGeneral" /><span class="txt">Let påvirkelig / svingende</span></label>
+            <label class="opt"><input type="checkbox" name="emoGeneral" /><span class="txt">Ofte stresset eller indre urolig</span></label>
+            <label class="opt"><input type="checkbox" name="emoGeneral" /><span class="txt">Ofte nedtrykt eller trist</span></label>
+          </div>
+          <div class="hint">Disse fire tæller ikke i TCM-tags, medmindre du ønsker at knytte dem til mønstre senere.</div>
+        </div>
+
+        <div>
+          <label>Hyppige følelsesmæssige tilstande (flere mulige)</label>
+          <div class="options">
+            <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Shi-ubalancer" /><span class="txt">Irritation / vrede<div class="tags">(Lever-Shi-ubalancer)</div></span></label>
+            <label class="opt"><input type="checkbox" class="tcm" data-tags="Milt-Qi-Xu,Fugt" /><span class="txt">Bekymring / overtænkning<div class="tags">(Milt-Qi-Xu, Fugt)</div></span></label>
+            <label class="opt"><input type="checkbox" name="emoStates" /><span class="txt">Sorg / melankoli</span></label>
+            <label class="opt"><input type="checkbox" class="tcm" data-tags="Hjerte-ubalancer,Nyre-ubalancer" /><span class="txt">Frygt / indre uro<div class="tags">(Hjerte-ubalancer, Nyre-ubalancer)</div></span></label>
+            <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme" /><span class="txt">Rastløshed<div class="tags">(Varme)</div></span></label>
+            <label class="opt"><input type="checkbox" name="emoStates" /><span class="txt">Andet: <input type="text" style="margin-top:8px;" placeholder="Skriv her..." /></span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div>
+        <label>Hvordan påvirker mentale/emotionelle belastninger din krop? (flere mulige)</label>
+        <div class="options">
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" /><span class="txt">Spændinger (fx nakke, skuldre, kæbe)<div class="tags">(Lever-Qi-stagnation)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Qi-Xu" /><span class="txt">Træthed eller energitab<div class="tags">(Qi-Xu)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Yin-Xu,Xue-Xu,Varme" /><span class="txt">Søvnforstyrrelser<div class="tags">(Yin-Xu, Xue-Xu, Varme)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Milt-Qi-Xu,Lever-Qi-stagnation" /><span class="txt">Fordøjelsesgener<div class="tags">(Milt-Qi-Xu, Lever-Qi-stagnation)</div></span></label>
+          <label class="opt"><input type="checkbox" name="bodyImpact" /><span class="txt">Ingen tydelig kropslig påvirkning</span></label>
+          <label class="opt"><input type="checkbox" name="bodyImpact" /><span class="txt">Andet: <input type="text" style="margin-top:8px;" placeholder="Skriv her..." /></span></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="card" data-section="7">
+      <div class="section-title">
+        <h2>7. Søvn</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="sleepHours">Hvor mange timer sover du om natten?</label>
+          <input id="sleepHours" name="sleepHours" type="text" />
+        </div>
+        <div>
+          <label for="sleepWake">Hvornår vågner du i løbet af natten?</label>
+          <input id="sleepWake" name="sleepWake" type="text" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation,Lever-Ild,Madstagnation,Shi-Varme" /><span class="txt">Akut søvnbesvær<div class="tags">(Lever-Qi-stagnation, Lever-Ild, Madstagnation, Shi-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Hjerte-Xue-Xu,Hjerte-Yin-Xu,Lever-Qi-stagnation" /><span class="txt">Indslumringsbesvær (men ellers god søvn)<div class="tags">(Hjerte-Xue-Xu, Hjerte-Yin-Xu, Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Yin-Xu,Xue-Xu,Madstagnation" /><span class="txt">Vågner ofte i løbet af natten<div class="tags">(Yin-Xu, Xue-Xu, Madstagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Madstagnation,Varme" /><span class="txt">Urolig søvn med mange drømme<div class="tags">(Madstagnation, Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme,Galdeblære-Qi-Xu,Hjerte-Qi-Xu,Lever-Qi-stagnation" /><span class="txt">Vågner tidligt uden at kunne sove igen<div class="tags">(Varme, Galdeblære-Qi-Xu, Hjerte-Qi-Xu, Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Varme,Hjerte-Varme,Hjerte-Ild" /><span class="txt">Mareridt og voldsomme drømme<div class="tags">(Lever-Varme, Hjerte-Varme, Hjerte-Ild)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation-Varme" /><span class="txt">Vågner ofte når stresset eller følelsesmæssigt presset<div class="tags">(Lever-Qi-stagnation-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Hjerte-Yin-Xu,Hjerte-Xue-Xu" /><span class="txt">Søvnløshed med hjertebanken<div class="tags">(Hjerte-Yin-Xu, Hjerte-Xue-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Madstagnation" /><span class="txt">Søvnbesvær efter sene måltider eller bestemte madvarer<div class="tags">(Madstagnation)</div></span></label>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="card" data-section="8">
+      <div class="section-title">
+        <h2>8. Tørst</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div>
+        <label for="drink">Hvor meget og hvad drikker du i løbet af en dag?</label>
+        <textarea id="drink" name="drink"></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-Varme" /><span class="txt">Stor tørst med lyst til kolde drikke og store slurke<div class="tags">(Shi-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Yin-Xu-Varme" /><span class="txt">Tørst/tørhed i mund og hals, nipper til vand<div class="tags">(Yin-Xu-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Kulde,Yang-Xu" /><span class="txt">Manglende tørst eller lyst til varme drikke<div class="tags">(Kulde, Yang-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme" /><span class="txt">Tørst uden lyst til at drikke<div class="tags">(Fugt-Varme)</div></span></label>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="card" data-section="9">
+      <div class="section-title">
+        <h2>9. Appetit</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="meals">Hvor mange måltider spiser du om dagen?</label>
+          <input id="meals" name="meals" type="text" />
+        </div>
+        <div>
+          <label for="foodPrefs">Evt. kommentarer</label>
+          <input id="foodPrefs" name="foodPrefs" type="text" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme" /><span class="txt">Foretrækker kold mad<div class="tags">(Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Kulde" /><span class="txt">Foretrækker varm mad<div class="tags">(Kulde)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Milt-Qi-Xu" /><span class="txt">Svag appetit eller hurtig mæthed<div class="tags">(Milt-Qi-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Mave-Qi-Xu,Milt-Qi-Xu,Fugt,Slim" /><span class="txt">Ingen appetit om morgenen<div class="tags">(Mave-Qi-Xu, Milt-Qi-Xu, Fugt, Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Mave-Ild" /><span class="txt">Umættelig sult / hurtigt sulten efter måltider<div class="tags">(Mave-Ild)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Madstagnation" /><span class="txt">Væmmelse ved mad<div class="tags">(Madstagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Mave-Varme" /><span class="txt">Sure opstød<div class="tags">(Mave-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Milt-Qi-Xu,Madstagnation" /><span class="txt">Kvalme efter at have spist<div class="tags">(Milt-Qi-Xu, Madstagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" /><span class="txt">Kvalme ved følelsesmæssigt pres og stress<div class="tags">(Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Milt-Qi-Xu" /><span class="txt">Kvalme ved sult<div class="tags">(Milt-Qi-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" /><span class="txt">Kvalme i den præmenstruelle periode<div class="tags">(Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Rebelsk-Qi,Mave-Qi-Xu,Milt-Qi-Xu,Lever-Ild,Mave-Ild,Lever-Qi-stagnation,Mave-Yin-Xu" /><span class="txt">Graviditetskvalme<div class="tags">(Rebelsk-Qi, Mave-Qi-Xu, Milt-Qi-Xu, Lever-Ild, Mave-Ild, Lever-Qi-stagnation, Mave-Yin-Xu)</div></span></label>
+      </div>
+
+      <details>
+        <summary>KUN VED OPKAST</summary>
+        <div class="options" style="margin-top:10px;">
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Invasion-af-xie-qi,Madstagnation" /><span class="txt">Akut opkast<div class="tags">(Invasion-af-xie-qi, Madstagnation)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Madstagnation,Fugt-Slim,Lever-Qi-stagnation,Mave-Ild,Mave-Qi-Xu,Milt-Qi-Xu,Milt-Yang-Xu" /><span class="txt">Kronisk opkast<div class="tags">(Madstagnation, Fugt-Slim, Lever-Qi-stagnation, Mave-Ild, Mave-Qi-Xu, Milt-Qi-Xu, Milt-Yang-Xu)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-tilstande" /><span class="txt">Eksplosivt opkast<div class="tags">(Shi-tilstande)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Slim" /><span class="txt">Tyndt slimet opkast<div class="tags">(Fugt-Slim)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme-i-Maven,Varme-i-Leveren,Varme-i-Galdeblæren" /><span class="txt">Surt eller bittert opkast<div class="tags">(Varme-i-Maven, Varme-i-Leveren, Varme-i-Galdeblæren)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Kulde-i-Maven,Milt-Yang-Xu" /><span class="txt">Klart og vandigt opkast uden lugt<div class="tags">(Kulde-i-Maven, Milt-Yang-Xu)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-stase,Mave-Ild" /><span class="txt">Opkast med blod<div class="tags">(Xue-stase, Mave-Ild)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Madstagnation" /><span class="txt">Surt opstød med smag af tidligere indtaget mad<div class="tags">(Madstagnation)</div></span></label>
+        </div>
+      </details>
+    </section>
+
+    <!-- 10 -->
+    <section class="card" data-section="10">
+      <div class="section-title">
+        <h2>10. Fordøjelse</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div>
+        <label for="bowelFreq">Hvor ofte er du på toilettet med afføring i et typisk døgn?</label>
+        <input id="bowelFreq" name="bowelFreq" type="text" />
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-Varme" /><span class="txt">Forstoppelse med tør afføring og spændt bughule<div class="tags">(Shi-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-Kulde" /><span class="txt">Forstoppelse med hård afføring og krampende smerter<div class="tags">(Shi-Kulde)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" /><span class="txt">Små knoldede afføringer (gedeafføring)<div class="tags">(Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Milt-Qi-Xu" /><span class="txt">Lang, tynd afføring uden udtørring<div class="tags">(Milt-Qi-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Xu,Yin-Xu" /><span class="txt">Udtørret afføring uden spændt bughule<div class="tags">(Xue-Xu, Yin-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lunge-Qi-Xu" /><span class="txt">Udmattelse efter afføring<div class="tags">(Lunge-Qi-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" /><span class="txt">Træg afføring<div class="tags">(Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Xu" /><span class="txt">Forstoppelse efter fødsel<div class="tags">(Xue-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" /><span class="txt">Vekslende afføring<div class="tags">(Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-tilstande" /><span class="txt">Tilstande som bedres efter afføring<div class="tags">(Shi-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-tilstande" /><span class="txt">Tilstande som forværres efter afføring<div class="tags">(Xu-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Milt-Qi-Xu" /><span class="txt">Afføring kort tid efter spisning<div class="tags">(Milt-Qi-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Yang-Xu,Milt-Yang-Xu" /><span class="txt">Afføring omkring daggry<div class="tags">(Nyre-Yang-Xu, Milt-Yang-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme" /><span class="txt">Klistret afføring<div class="tags">(Fugt-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Slim" /><span class="txt">Afføring med slim<div class="tags">(Fugt-Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Yang-Xu,Shi-Kulde" /><span class="txt">Vandet afføring med ufordøjede madrester<div class="tags">(Yang-Xu, Shi-Kulde)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" /><span class="txt">Flatulens uden lugt<div class="tags">(Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme" /><span class="txt">Flatulens med lugt<div class="tags">(Fugt-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-tilstande" /><span class="txt">Ubehag i tarmene som lindres af afføring<div class="tags">(Shi-tilstande)</div></span></label>
+      </div>
+
+      <details>
+        <summary>KUN VED DIARRÉ</summary>
+        <div class="options" style="margin-top:10px;">
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-tilstande" /><span class="txt">Eksplosiv diarré<div class="tags">(Shi-tilstande)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-tilstande" /><span class="txt">Akut diarré<div class="tags">(Shi-tilstande)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-tilstande" /><span class="txt">Kronisk diarré<div class="tags">(Xu-tilstande)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme" /><span class="txt">Brændende fornemmelse i endetarmen og stærk lugt<div class="tags">(Fugt-Varme)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" /><span class="txt">Kramper som lindres af afføring<div class="tags">(Lever-Qi-stagnation)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation,Fugt-Varme" /><span class="txt">Smerter som lindres af afføring<div class="tags">(Lever-Qi-stagnation, Fugt-Varme)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme,Toksisk-Ild" /><span class="txt">Blodig diarré<div class="tags">(Fugt-Varme, Toksisk-Ild)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme" /><span class="txt">Forværres af alkohol, fed mad, mejeriprodukter og sukker<div class="tags">(Fugt-Varme)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Milt-Qi-Xu,Milt-Yang-Xu,Fugt" /><span class="txt">Forværres af kolde fødevarer og råkost<div class="tags">(Milt-Qi-Xu, Milt-Yang-Xu, Fugt)</div></span></label>
+          <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-tilstande" /><span class="txt">Bedres efter afføring<div class="tags">(Shi-tilstande)</div></span></label>
+        </div>
+      </details>
+    </section>
+
+    <!-- 11 -->
+    <section class="card" data-section="11">
+      <div class="section-title">
+        <h2>11. Vandladning</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div>
+        <label for="urineFreq">Hvor mange gange tisser du om dagen?</label>
+        <input id="urineFreq" name="urineFreq" type="text" />
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme" /><span class="txt">Mørk, gullig eller lugtende urin<div class="tags">(Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Kulde,Yang-Xu" /><span class="txt">Klar og rigelig urin<div class="tags">(Kulde, Yang-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme-i-nedre-jiao" /><span class="txt">Hyppig, sparsom og gul urin<div class="tags">(Fugt-Varme-i-nedre-jiao)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Yang-Xu,Kulde-i-nedre-jiao" /><span class="txt">Hyppige vandladninger med klar urin<div class="tags">(Yang-Xu, Kulde-i-nedre-jiao)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme,Yang-Xu,Kulde,Slim,Xue-stase,Lever-Qi-stagnation" /><span class="txt">Vanskelig eller ufuldstændig vandladning<div class="tags">(Fugt-Varme, Yang-Xu, Kulde, Slim, Xue-stase, Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-Varme,Milt-Qi-Xu" /><span class="txt">Blod i urinen<div class="tags">(Shi-Varme, Milt-Qi-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Yang-Xu" /><span class="txt">Natlig vandladning<div class="tags">(Nyre-Yang-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Qi-stagnation" /><span class="txt">Smerter før vandladning<div class="tags">(Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme-i-Urinblæren" /><span class="txt">Smerter under vandladning<div class="tags">(Varme-i-Urinblæren)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-tilstande" /><span class="txt">Smerter efter vandladning<div class="tags">(Xu-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt" /><span class="txt">Grumset urin<div class="tags">(Fugt)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt" /><span class="txt">Olieret urin<div class="tags">(Fugt)</div></span></label>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section class="card" data-section="12">
+      <div class="section-title">
+        <h2>12. Hjertebanken</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div>
+        <label for="heartIssues">Har du problemer med hjertet?</label>
+        <input id="heartIssues" name="heartIssues" type="text" placeholder="Valgfrit: beskriv kort..." />
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Hjerte-Yin-Xu,Hjerte-Xue-Xu,Varme,Galdeblære-ubalancer,Hjerte-Qi-Xu" /><span class="txt">Hjertebanken med uro eller angst<div class="tags">(Hjerte-Yin-Xu, Hjerte-Xue-Xu, Varme, Galdeblære-ubalancer, Hjerte-Qi-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Hjerte-Qi-stagnation" /><span class="txt">Hjertebanken med spændt fornemmelse<div class="tags">(Hjerte-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Hjerte-Xue-stase" /><span class="txt">Hjertebanken med jagende smerter i brystet<div class="tags">(Hjerte-Xue-stase)</div></span></label>
+      </div>
+    </section>
+
+    <!-- 13 -->
+    <section class="card" data-section="13">
+      <div class="section-title">
+        <h2>13. Brystkasse</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Hjerte-Xue-stase,Varme,Kulde" /><span class="txt">Smerter<div class="tags">(Hjerte-Xue-stase, Varme, Kulde)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme" /><span class="txt">Uro<div class="tags">(Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Slim" /><span class="txt">Tunghed<div class="tags">(Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Qi-stagnation" /><span class="txt">Spændthed<div class="tags">(Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Hjerte-Xue-stase" /><span class="txt">Smerter der stråler ned i venstre arm<div class="tags">(Hjerte-Xue-stase)</div></span></label>
+      </div>
+    </section>
+
+    <!-- 14 -->
+    <section class="card" data-section="14">
+      <div class="section-title">
+        <h2>14. Hoste, vejrtrækning og næse</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="breathIssues">Har du problemer med vejrtrækningen?</label>
+          <input id="breathIssues" name="breathIssues" type="text" />
+        </div>
+        <div>
+          <label for="deepBreath">Kan du trække vejret helt ned i maven?</label>
+          <input id="deepBreath" name="deepBreath" type="text" />
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <label for="colds">Bliver du ofte forkølet?</label>
+        <input id="colds" name="colds" type="text" />
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Vind-Kulde,Fugt-Slim,Slim-Kulde" /><span class="txt">Kraftig hoste med hvidt eller klart slim<div class="tags">(Vind-Kulde, Fugt-Slim, Slim-Kulde)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Vind-Varme,Slim-Varme" /><span class="txt">Kraftig hoste med gult slim<div class="tags">(Vind-Varme, Slim-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-tilstande" /><span class="txt">Kraftig og eksplosiv hoste<div class="tags">(Shi-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-Varme" /><span class="txt">Gøende hoste<div class="tags">(Shi-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lunge-Yin-Xu,Tørhed" /><span class="txt">Tør eller kildrende hoste<div class="tags">(Lunge-Yin-Xu, Tørhed)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-tilstande" /><span class="txt">Svag hoste<div class="tags">(Xu-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lunge-Yin-Xu" /><span class="txt">Svag hoste med lidt eller intet slim<div class="tags">(Lunge-Yin-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-Varme-i-Lungerne" /><span class="txt">Hoste med sejt slim<div class="tags">(Shi-Varme-i-Lungerne)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Slim-Kulde,Fugt-Slim" /><span class="txt">Løstsiddende, klart eller vandigt slim<div class="tags">(Slim-Kulde, Fugt-Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lunge-Yin-Xu" /><span class="txt">Hosten er værst om aftenen og natten<div class="tags">(Lunge-Yin-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Slim" /><span class="txt">Hosten er værst om morgenen<div class="tags">(Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lunge-Xu-ubalance" /><span class="txt">Hosten opstår ved tale eller træthed<div class="tags">(Lunge-Xu-ubalance)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Slim" /><span class="txt">Hosten forværres af mejeriprodukter<div class="tags">(Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lunge-Qi-Xu,Lunge-Yin-Xu,Nyre-Qi-Xu,Slim,Qi-stagnation" /><span class="txt">Stakåndethed og let forpustet<div class="tags">(Lunge-Qi-Xu, Lunge-Yin-Xu, Nyre-Qi-Xu, Slim, Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Slim,Lunge-Qi-Xu,Qi-stagnation,Xue-stase-i-Lungerne,Invasion-af-xie-qi" /><span class="txt">Besværet vejrtrækning<div class="tags">(Slim, Lunge-Qi-Xu, Qi-stagnation, Xue-stase-i-Lungerne, Invasion-af-xie-qi)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Slim" /><span class="txt">Pibende eller rallende vejrtrækning<div class="tags">(Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" /><span class="txt">Behov for at sukke eller gabe<div class="tags">(Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Slim" /><span class="txt">Tung fornemmelse på brystet<div class="tags">(Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Qi-stagnation" /><span class="txt">Svært ved at trække vejret helt ned<div class="tags">(Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Invasion-af-xie-qi,Lunge-Qi-Xu" /><span class="txt">Nysen<div class="tags">(Invasion-af-xie-qi, Lunge-Qi-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Vind-Kulde,Fugt-Slim" /><span class="txt">Klar, vandig næseflåd<div class="tags">(Vind-Kulde, Fugt-Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Vind-Varme,Slim-Varme,Toksisk-Ild" /><span class="txt">Tilstoppet næse med gult eller grønt slim<div class="tags">(Vind-Varme, Slim-Varme, Toksisk-Ild)</div></span></label>
+      </div>
+    </section>
+
+    <!-- 15 -->
+    <section class="card" data-section="15">
+      <div class="section-title">
+        <h2>15. Hud, hår og negle</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Jing-Xu,Xue-Xu,Ild,Vind-Varme,Fugt,Slim" /><span class="txt">Hårtab eller skaldethed<div class="tags">(Jing-Xu, Xue-Xu, Ild, Vind-Varme, Fugt, Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Xu" /><span class="txt">Tørt hår<div class="tags">(Xue-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme,Slim" /><span class="txt">Fedtet hår<div class="tags">(Fugt-Varme, Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme" /><span class="txt">Fedtet og kløende hårbund<div class="tags">(Fugt-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Xu,Xue-stase,Yin-Xu" /><span class="txt">Tør hud<div class="tags">(Xue-Xu, Xue-stase, Yin-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme,Slim" /><span class="txt">Fedtet hud<div class="tags">(Fugt-Varme, Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Vind,Fugt,Tørhed,Xue-stase" /><span class="txt">Kløende hud<div class="tags">(Vind, Fugt, Tørhed, Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-stase,Fugt" /><span class="txt">Meget tykke, flossede eller deformerede negle<div class="tags">(Xue-stase, Fugt)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Xue-Xu" /><span class="txt">Svage negle der knækker eller flosser<div class="tags">(Lever-Xue-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Xue-Xu" /><span class="txt">Rillede fingernegle<div class="tags">(Lever-Xue-Xu)</div></span></label>
+      </div>
+    </section>
+
+    <!-- 16 -->
+    <section class="card" data-section="16">
+      <div class="section-title">
+        <h2>16. Ører</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="hearing">Hvordan er din hørelse?</label>
+          <input id="hearing" name="hearing" type="text" />
+        </div>
+        <div>
+          <label for="tinnitus">Lider du af tinnitus?</label>
+          <input id="tinnitus" name="tinnitus" type="text" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-tilstande" /><span class="txt">Tinnitus med kraftig lyd eller susen<div class="tags">(Shi-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-tilstande" /><span class="txt">Tinnitus med lav lyd eller svag susen<div class="tags">(Xu-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Yin-Xu,Lever-Yin-Xu,Nyre-Jing-Xu" /><span class="txt">Tinnitus opstået gradvist<div class="tags">(Nyre-Yin-Xu, Lever-Yin-Xu, Nyre-Jing-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Ild,Opadstigende-Lever-Yang,Vind-Varme,Xue-stase" /><span class="txt">Tinnitus opstået pludseligt<div class="tags">(Lever-Ild, Opadstigende-Lever-Yang, Vind-Varme, Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Xu-ubalance" /><span class="txt">Nedsat hørelse<div class="tags">(Nyre-Xu-ubalance)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Vind-Varme,Opadstigende-Lever-Vind" /><span class="txt">Pludseligt opstået høretab<div class="tags">(Vind-Varme, Opadstigende-Lever-Vind)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Vind-Varme,Lever-Fugt-Varme,Galdeblære-Fugt-Varme,Xue-stase,Qi-stagnation,Opadstigende-Lever-Yang,Lever-Ild" /><span class="txt">Ørepine<div class="tags">(Vind-Varme, Lever-Fugt-Varme, Galdeblære-Fugt-Varme, Xue-stase, Qi-stagnation, Opadstigende-Lever-Yang, Lever-Ild)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Vind-Varme,Lever-Fugt-Varme,Galdeblære-Fugt-Varme,Toksisk-Ild" /><span class="txt">Mellemørebetændelse eller væske fra øret<div class="tags">(Vind-Varme, Lever-Fugt-Varme, Galdeblære-Fugt-Varme, Toksisk-Ild)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Vind-Varme,Galdeblære-Fugt-Varme,Lever-Xue-Xu,Nyre-Yin-Xu-Varme" /><span class="txt">Kløende ører<div class="tags">(Vind-Varme, Galdeblære-Fugt-Varme, Lever-Xue-Xu, Nyre-Yin-Xu-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Slim,Fugt,Lever-Fugt-Varme,Galdeblære-Fugt-Varme,Nyre-ubalancer,Milt-Yang-Xu" /><span class="txt">Øget produktion af ørevoks<div class="tags">(Slim, Fugt, Lever-Fugt-Varme, Galdeblære-Fugt-Varme, Nyre-ubalancer, Milt-Yang-Xu)</div></span></label>
+      </div>
+    </section>
+
+    <!-- 17 -->
+    <section class="card" data-section="17">
+      <div class="section-title">
+        <h2>17. Øjne</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="nightBlind">Er du natteblind?</label>
+          <input id="nightBlind" name="nightBlind" type="text" />
+        </div>
+        <div>
+          <label for="eyesNotes">Evt. kommentar</label>
+          <input id="eyesNotes" name="eyesNotes" type="text" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Vind-Varme,Toksisk-Ild,Lever-Ild,Mave-Ild" /><span class="txt">Røde øjne med hævelse eller smerter<div class="tags">(Vind-Varme, Toksisk-Ild, Lever-Ild, Mave-Ild)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Yin-Xu,Lever-Yin-Xu" /><span class="txt">Tørre øjne<div class="tags">(Nyre-Yin-Xu, Lever-Yin-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Xu" /><span class="txt">Tåget syn, flimmer eller “flydere”<div class="tags">(Xue-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Xue-Xu,Lever-Yin-Xu,Lever-Ild,Opadstigende-Lever-Yang,Slim" /><span class="txt">Synsforstyrrelser<div class="tags">(Lever-Xue-Xu, Lever-Yin-Xu, Lever-Ild, Opadstigende-Lever-Yang, Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Opadstigende-Lever-Yang,Lever-Ild" /><span class="txt">Trykkende fornemmelse bag øjnene<div class="tags">(Opadstigende-Lever-Yang, Lever-Ild)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Xu" /><span class="txt">Lysfølsomhed<div class="tags">(Xue-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-ubalancer,Vind-Kulde,Vind-Varme" /><span class="txt">Øjnene løber i vand ved vind<div class="tags">(Lever-ubalancer, Vind-Kulde, Vind-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Yin-Xu,Lever-Xue-Xu,Lever-Ild,Mave-Ild,Hjerte-Ild,Vind-Varme" /><span class="txt">Kløende øjne<div class="tags">(Lever-Yin-Xu, Lever-Xue-Xu, Lever-Ild, Mave-Ild, Hjerte-Ild, Vind-Varme)</div></span></label>
+      </div>
+    </section>
+
+    <!-- 18 -->
+    <section class="card" data-section="18">
+      <div class="section-title">
+        <h2>18. Svimmelhed</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div>
+        <label for="dizzy">Oplever du svimmelhed?</label>
+        <input id="dizzy" name="dizzy" type="text" />
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Qi-Xu,Xue-Xu,Slim" /><span class="txt">Svimmelhed når man rejser sig<div class="tags">(Qi-Xu, Xue-Xu, Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Vind-Slim" /><span class="txt">Pludselig svimmelhed med tungt hoved<div class="tags">(Vind-Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Qi-Xu,Xue-Xu" /><span class="txt">Svimmelhed med uklart syn, forværres ved træthed<div class="tags">(Qi-Xu, Xue-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Jing-Xu" /><span class="txt">Svimmelhed værre efter sex<div class="tags">(Nyre-Jing-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Jing-Xu" /><span class="txt">Svimmelhed med susen for ørerne<div class="tags">(Nyre-Jing-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Opadstigende-Lever-Yang" /><span class="txt">Svimmelhed med hyletone eller hovedpine<div class="tags">(Opadstigende-Lever-Yang)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Slim" /><span class="txt">Svimmelhed med tunghed i krop eller hoved<div class="tags">(Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Slim" /><span class="txt">Kvalme ved svimmelhed<div class="tags">(Slim)</div></span></label>
+      </div>
+    </section>
+
+    <!-- 19 -->
+    <section class="card" data-section="19">
+      <div class="section-title">
+        <h2>19. Temperatur & svedtendens</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xie-Kulde,Yang-Xu" /><span class="txt">Aversion mod kulde<div class="tags">(Xie-Kulde, Yang-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme" /><span class="txt">Aversion mod varme<div class="tags">(Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Vind-Varme,Vind-Kulde" /><span class="txt">Kuldegysninger og feber samtidigt<div class="tags">(Vind-Varme, Vind-Kulde)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Indre-Shi-Varme" /><span class="txt">Vedvarende eller kraftig feber<div class="tags">(Indre-Shi-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Yin-Xu-Varme" /><span class="txt">Feber om eftermiddagen eller aftenen<div class="tags">(Yin-Xu-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Qi-Xu" /><span class="txt">Let varme ved anstrengelse<div class="tags">(Qi-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xie-Qi-på-Shaoyang-niveau" /><span class="txt">Vekslende feber og kuldegysninger<div class="tags">(Xie-Qi-på-Shaoyang-niveau)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Yin-Xu-Varme" /><span class="txt">Fem fladers varme<div class="tags">(Yin-Xu-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation,Yang-Xu,Qi-Xu,Xue-Xu" /><span class="txt">Kolde hænder og fødder<div class="tags">(Lever-Qi-stagnation, Yang-Xu, Qi-Xu, Xue-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Yang-Xu,Qi-Xu" /><span class="txt">Spontan sved<div class="tags">(Yang-Xu, Qi-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Yin-Xu,Yin-niveau-Varme,Fugt-Varme" /><span class="txt">Nattesved<div class="tags">(Yin-Xu, Yin-niveau-Varme, Fugt-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Yangming-stadie,Qi-niveau,Shi-Varme" /><span class="txt">Kraftig eller konstant sved<div class="tags">(Yangming-stadie, Qi-niveau, Shi-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shaoyang-stadie" /><span class="txt">Vekslen mellem sved og kuldegysninger<div class="tags">(Shaoyang-stadie)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Yin-Xu" /><span class="txt">Fem fladers sved<div class="tags">(Yin-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme" /><span class="txt">Gulligt eller klistret sved<div class="tags">(Fugt-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme" /><span class="txt">Kraftigt lugtende sved<div class="tags">(Fugt-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Hjerte-Qi-Xu" /><span class="txt">Sved ved nervøsitet<div class="tags">(Hjerte-Qi-Xu)</div></span></label>
+      </div>
+    </section>
+
+    <!-- 20–22 (beholdt som komplette lister; meget lange sektioner) -->
+    <section class="card" data-section="20">
+      <div class="section-title">
+        <h2>20. Menstruationscyklus & blødninger (kun kvinder)</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+      <div class="small">Hvis ikke relevant, kan sektionen springes over.</div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Jing-Xu,Xue-Xu,Qi-stagnation" /><span class="txt">Sen menarche<div class="tags">(Jing-Xu, Xue-Xu, Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Jing-Xu,Xue-Xu,Fugt,Slim-stagnation,Qi-stagnation,Varme,Kulde,Nyre-Yin-Xu,Nyre-Yang-Xu" /><span class="txt">Svært ved at blive gravid<div class="tags">(Jing-Xu, Xue-Xu, Fugt, Slim-stagnation, Qi-stagnation, Varme, Kulde, Nyre-Yin-Xu, Nyre-Yang-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Xu-ubalance,Milt-Qi-Xu,Varme" /><span class="txt">Gentagne ufrivillige aborter<div class="tags">(Nyre-Xu-ubalance, Milt-Qi-Xu, Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-Varme,Shi-Varme,Milt-Qi-Xu" /><span class="txt">Kort cyklus<div class="tags">(Xu-Varme, Shi-Varme, Milt-Qi-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Xu,Kulde-stagnation,Xue-stase,Qi-stagnation" /><span class="txt">Lang cyklus<div class="tags">(Xue-Xu, Kulde-stagnation, Xue-stase, Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation,Milt-ubalancer,Nyre-Xu-ubalance" /><span class="txt">Uregelmæssig cyklus<div class="tags">(Lever-Qi-stagnation, Milt-ubalancer, Nyre-Xu-ubalance)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-Varme,Shi-Varme,Milt-Qi-Xu" /><span class="txt">Kraftige blødninger<div class="tags">(Xu-Varme, Shi-Varme, Milt-Qi-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Xu,Xue-stase,Fugt,Slim" /><span class="txt">Svage blødninger<div class="tags">(Xue-Xu, Xue-stase, Fugt, Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme,Qi-stagnation,Milt-Qi-Xu" /><span class="txt">Forlængede blødninger / pletblødninger<div class="tags">(Varme, Qi-stagnation, Milt-Qi-Xu)</div></span></label>
+
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Shi-tilstande" /><span class="txt">Tykt blod<div class="tags">(Shi-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-tilstande" /><span class="txt">Tyndt blod<div class="tags">(Xu-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Xu,Qi-Xu" /><span class="txt">Vandigt og tyndt blod<div class="tags">(Xue-Xu, Qi-Xu)</div></span></label>
+
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Qi-stagnation,Xue-stase" /><span class="txt">Klumper i blodet<div class="tags">(Qi-stagnation, Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Kulde-stagnation,Xue-stase" /><span class="txt">Grumset blod (kaffegrums-lignende)<div class="tags">(Kulde-stagnation, Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme" /><span class="txt">Kraftigt rødt blod<div class="tags">(Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-stase" /><span class="txt">Sort eller meget mørkt blod<div class="tags">(Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xu-tilstande" /><span class="txt">Brunligt blod<div class="tags">(Xu-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Yin-Xu,Varme" /><span class="txt">Klistret menstruationsblod<div class="tags">(Yin-Xu, Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Slim" /><span class="txt">Slimet menstruationsblod<div class="tags">(Slim)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme,Ild" /><span class="txt">Kraftigt lugtende menstruationsblod<div class="tags">(Fugt-Varme, Ild)</div></span></label>
+
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Qi-stagnation,Xue-stase" /><span class="txt">Smerter før menstruation<div class="tags">(Qi-stagnation, Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Varme,Xue-stase" /><span class="txt">Smerter under menstruation<div class="tags">(Xue-Varme, Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Xu" /><span class="txt">Smerter efter menstruation<div class="tags">(Xue-Xu)</div></span></label>
+
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Qi-stagnation" /><span class="txt">Kraftige, krampende smerter før/under menstruation<div class="tags">(Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-stase" /><span class="txt">Jagende/stikkende/borende smerter<div class="tags">(Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Kulde" /><span class="txt">Krampende eller bidende smerter<div class="tags">(Kulde)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt" /><span class="txt">Tyngende smerter<div class="tags">(Fugt)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme" /><span class="txt">Brændende eller sviende smerter<div class="tags">(Varme)</div></span></label>
+
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-Varme" /><span class="txt">Pludseligt opstået blødning<div class="tags">(Xue-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Xue-stase" /><span class="txt">Forsinket/forlænget blødning uden kraftig mængde<div class="tags">(Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-stagnation,Qi-stagnation,Xue-stase" /><span class="txt">Menstruation med pressende fornemmelse<div class="tags">(Fugt-stagnation, Qi-stagnation, Xue-stase)</div></span></label>
+
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" /><span class="txt">Brystspændinger før menstruation<div class="tags">(Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" /><span class="txt">Irritabilitet før menstruation<div class="tags">(Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Xue-Xu" /><span class="txt">Let til gråd før menstruation<div class="tags">(Lever-Xue-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-invaderer-Milten" /><span class="txt">Vekslende afføring, kvalme eller ødem før menstruation<div class="tags">(Lever-Qi-invaderer-Milten)</div></span></label>
+      </div>
+    </section>
+
+    <section class="card" data-section="21">
+      <div class="section-title">
+        <h2>21. Vaginalt udflåd (kun kvinder)</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+      <div class="small">Hvis ikke relevant, kan sektionen springes over.</div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme" /><span class="txt">Gulligt og lugtende udflåd<div class="tags">(Fugt-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Kulde,Milt-Yang-Xu,Nyre-Yang-Xu" /><span class="txt">Hvidligt eller gennemsigtigt udflåd<div class="tags">(Kulde, Milt-Yang-Xu, Nyre-Yang-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme" /><span class="txt">Hvidt og rødt udflåd<div class="tags">(Fugt-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme-i-Levermeridianen,Toksisk-Ild" /><span class="txt">Grønligt udflåd<div class="tags">(Fugt-Varme-i-Levermeridianen, Toksisk-Ild)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Kulde,Nyre-Xu-ubalance" /><span class="txt">Vandigt udflåd<div class="tags">(Fugt-Kulde, Nyre-Xu-ubalance)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme" /><span class="txt">Tyk konsistens<div class="tags">(Fugt-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme" /><span class="txt">Kraftigt lugtende udflåd<div class="tags">(Varme)</div></span></label>
+      </div>
+    </section>
+
+    <section class="card" data-section="22">
+      <div class="section-title">
+        <h2>22. Mandlige ubalancer (kun mænd)</h2>
+        <span class="pill">TCM-tags</span>
+      </div>
+      <div class="small">Hvis ikke relevant, kan sektionen springes over.</div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Yang-Xu,Hjerte-Qi-Xu,Hjerte-Yang-Xu,Lever-Qi-stagnation" /><span class="txt">Manglende libido<div class="tags">(Nyre-Yang-Xu, Hjerte-Qi-Xu, Hjerte-Yang-Xu, Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Varme" /><span class="txt">Overdreven sexlyst<div class="tags">(Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation,Yang-Xu,Hjerte-Qi-Xu" /><span class="txt">Manglende orgasme<div class="tags">(Lever-Qi-stagnation, Yang-Xu, Hjerte-Qi-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Opadstigende-Lever-Yang,Rebelsk-Qi-i-Chong-Mai,Hjerte-Ild" /><span class="txt">Hovedpine efter orgasme<div class="tags">(Opadstigende-Lever-Yang, Rebelsk-Qi-i-Chong-Mai, Hjerte-Ild)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation" /><span class="txt">Spændt vaginal muskulatur<div class="tags">(Lever-Qi-stagnation)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Yin-Xu,Xue-Xu,Varme" /><span class="txt">Tørre slimhinder<div class="tags">(Yin-Xu, Xue-Xu, Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Xu-ubalancer,Hjerte-Xu-ubalancer,Lever-Qi-stagnation,Qi-Xu,Xue-Xu" /><span class="txt">Impotens<div class="tags">(Nyre-Xu-ubalancer, Hjerte-Xu-ubalancer, Lever-Qi-stagnation, Qi-Xu, Xue-Xu)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Xu-ubalancer,Varme,Hjerte-ubalancer" /><span class="txt">Ukontrolleret sædafgang<div class="tags">(Nyre-Xu-ubalancer, Varme, Hjerte-ubalancer)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Xu-ubalancer,Fugt-Varme,Xue-stase" /><span class="txt">Dårlig sædkvalitet<div class="tags">(Nyre-Xu-ubalancer, Fugt-Varme, Xue-stase)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Nyre-Xu-ubalancer,Slim,Xue-stase,Lever-Qi-stagnation,Fugt-Varme,Fugt-Kulde,Synkende-Milt-Qi" /><span class="txt">Prostataproblemer<div class="tags">(Nyre-Xu-ubalancer, Slim, Xue-stase, Lever-Qi-stagnation, Fugt-Varme, Fugt-Kulde, Synkende-Milt-Qi)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Lever-Qi-stagnation,Xue-stase,Fugt-Varme" /><span class="txt">Ømhed eller smerter i genitalier<div class="tags">(Lever-Qi-stagnation, Xue-stase, Fugt-Varme)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Kulde,Xu-tilstande" /><span class="txt">Kolde eller fugtige genitalier<div class="tags">(Kulde, Xu-tilstande)</div></span></label>
+        <label class="opt"><input type="checkbox" class="tcm" data-tags="Fugt-Varme" /><span class="txt">Svedige og klistrede genitalier<div class="tags">(Fugt-Varme)</div></span></label>
+      </div>
+    </section>
+
+    <!-- 23 -->
+    <section class="card" data-section="23">
+      <div class="section-title">
+        <h2>23. Opsummeringskategorier</h2>
+        <span class="pill">Beregnes automatisk</span>
+      </div>
+      <div class="small">
+        Denne sektion udfyldes automatisk i højre side: den tæller både <strong>tags</strong> og <strong>opsummerede kategorier</strong> baseret på dine afkrydsninger.
+      </div>
+      <div class="divider"></div>
+      <div class="row">
+        <span class="badge">Valgte tag-svar: <strong id="pickedCount">0</strong></span>
+        <span class="badge">Unikke tags: <strong id="uniqueTags">0</strong></span>
+        <span class="badge">Kategorier med score: <strong id="activeCats">0</strong></span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="right">
+    <section class="card">
+      <h3 class="sidebar-title">Optælling – opsummerede kategorier</h3>
+      <div class="small">Tælles pr. valgt udsagn (én gang pr. kategori pr. udsagn), så kategorier ikke “dobbelttælles” ved flere tags på samme linje.</div>
+      <div class="divider"></div>
+      <div id="catList"></div>
+    </section>
+
+    <section class="card">
+      <h3 class="sidebar-title">Optælling – tags (top 20)</h3>
+      <div class="small">Tælles pr. valgt udsagn (alle tags på udsagnet tæller hver for sig).</div>
+      <div class="divider"></div>
+      <div id="tagList"></div>
+
+      <details>
+        <summary>Vis alle tags (rå liste)</summary>
+        <pre id="allTagsPre" class="mono">—</pre>
+      </details>
+    </section>
+
+    <section class="card">
+      <h3 class="sidebar-title">Teknisk notat</h3>
+      <div class="small">
+        Alle TCM-afkrydsninger har <span class="mono">class="tcm"</span> og <span class="mono">data-tags="..."</span>.
+        Du kan senere udvide med scoring pr. sektion, eksport til server, eller automatisk diagnose-tekst.
+      </div>
+    </section>
+  </aside>
+</div>
+
+<script>
+/**
+ * TAGS + OPSUMMERINGSKATEGORIER
+ *
+ * Princip:
+ * - Hver markeret option indeholder 0..n tags (data-tags).
+ * - Tag-optælling: hver tag på en markeret option giver +1.
+ * - Kategori-optælling: for hver markeret option vurderes hvilke kategorier dens tags matcher, og hver matchende kategori får +1 (maks 1 pr. option pr. kategori).
+ *
+ * Det svarer mest til “hvor mange udsagn peger på kategorien”, frem for “sum af tags”.
+ */
+
+const CATEGORY_MAP = {
+  "Samlet Xu tilstande": new Set([
+    "Xu-tilstande","Qi-Xu","Yang-Xu","Yin-Xu","Xue-Xu","Jing-Xu",
+    "Milt-Qi-Xu","Mave-Qi-Xu","Nyre-Xu","Nyre-Xu-ubalance","Nyre-Xu-ubalancer",
+    "Lever-Xu","Hjerte-Xu","Hjerte-Qi-Xu","Hjerte-Yin-Xu","Hjerte-Xue-Xu",
+    "Lunge-Qi-Xu","Lunge-Yin-Xu","Galdeblære-Qi-Xu","Nyre-Qi-Xu","Milt-Yang-Xu","Nyre-Yang-Xu","Nyre-Yin-Xu","Nyre-Jing-Xu"
+  ]),
+  "Samlet Shi tilstande": new Set([
+    "Shi-tilstande","Shi-Varme","Shi-Kulde","Indre-Shi-Varme"
+  ]),
+  "Samlet Varme": new Set([
+    "Varme","Shi-Varme","Xu-Varme","Yin-Xu-Varme","Fugt-Varme","Lever-Ild","Mave-Ild","Hjerte-Ild",
+    "Toksisk-Ild","Vind-Varme","Lever-Varme","Hjerte-Varme","Shi-Varme-i-Lungerne","Varme-i-Urinblæren",
+    "Varme-i-Maven","Varme-i-Leveren","Varme-i-Galdeblæren","Yin-niveau-Varme","Qi-niveau","Yangming-stadie"
+  ]),
+  "Samlet Kulde": new Set([
+    "Kulde","Shi-Kulde","Kulde-stagnation","Vind-Kulde","Xie-Kulde","Kulde-i-Maven","Kulde-i-nedre-jiao"
+  ]),
+  "Samlet Slim/Fugt": new Set([
+    "Fugt","Slim","Fugt-Varme","Fugt-Slim","Fugt-Kulde","Vind-Slim","Slim-Kulde","Slim-Varme",
+    "Slim-stagnation","Fugt-Varme-i-nedre-jiao","Fugt-stagnation"
+  ]),
+  "Samlet Yin": new Set([
+    "Yin-Xu","Yin-Xu-Varme","Hjerte-Yin-Xu","Nyre-Yin-Xu","Lunge-Yin-Xu","Lever-Yin-Xu","Nyre-Yin-Xu-Varme","Mave-Yin-Xu"
+  ]),
+  "Samlet Yang": new Set([
+    "Yang-Xu","Nyre-Yang-Xu","Milt-Yang-Xu","Hjerte-Yang-Xu"
+  ]),
+  "Samlet Xue": new Set([
+    "Xue-stase","Xue-Xu","Hjerte-Xue-Xu","Hjerte-Xue-stase","Lever-Xue-Xu","Lever-Xue-Xu","Xue-Varme","Xue-stase-i-Lungerne"
+  ]),
+  "Samlet Milt": new Set([
+    "Milt-Qi-Xu","Milt-Yang-Xu","Lever-Qi-invaderer-Milten","Synkende-Milt-Qi","Milt-ubalancer"
+  ]),
+  "Samlet Hjerte": new Set([
+    "Hjerte-Qi-Xu","Hjerte-Yin-Xu","Hjerte-Xue-Xu","Hjerte-Ild","Hjerte-Varme","Hjerte-ubalancer","Hjerte-Qi-stagnation","Hjerte-Xue-stase"
+  ]),
+  "Samlet Lever/Galdeblære": new Set([
+    "Lever-Qi-stagnation","Lever-Ild","Opadstigende-Lever-Yang","Lever-Vind","Lever-Xue-Xu","Lever-Fugt-Varme",
+    "Galdeblære-Ild","Galdeblære-Qi-Xu","Galdeblære-Fugt-Varme","Galdeblære-ubalancer","Lever-ubalancer","Lever-Shi-ubalancer"
+  ]),
+  "Samlet Nyre": new Set([
+    "Nyre-Yang-Xu","Nyre-Yin-Xu","Nyre-Jing-Xu","Jing-Xu","Nyre-Xu-ubalance","Nyre-Xu-ubalancer","Nyre-Qi-Xu","Nyre-ubalancer"
+  ]),
+  "Samlet Lunge": new Set([
+    "Lunge-Qi-Xu","Lunge-Yin-Xu","Lunge-Xu-ubalance"
+  ]),
+  "Samlet Stagnationer": new Set([
+    "Qi-stagnation","Lever-Qi-stagnation","Xue-stase","Madstagnation","Kulde-stagnation","Slim-stagnation","Fugt-stagnation"
+  ])
+};
+
+// -------- Utilities --------
+function normalizeTag(t){
+  return (t || "")
+    .trim()
+    .replace(/\s+/g," ")
+    .replace(/[()]/g,"");
+}
+function parseTags(str){
+  if(!str) return [];
+  return str
+    .split(",")
+    .map(normalizeTag)
+    .filter(Boolean);
+}
+function getOptionTags(el){
+  return parseTags(el.getAttribute("data-tags") || "");
+}
+function optionCategories(tags){
+  const cats = [];
+  const setTags = new Set(tags);
+  for(const [cat, tagSet] of Object.entries(CATEGORY_MAP)){
+    let hit = false;
+    for(const t of setTags){
+      if(tagSet.has(t)){ hit = true; break; }
+    }
+    if(hit) cats.push(cat);
+  }
+  return cats;
+}
+
+// -------- Counting --------
+function recompute(){
+  const checked = Array.from(document.querySelectorAll('input.tcm[type="checkbox"]:checked'));
+  const tagCounts = new Map();
+  const catCounts = new Map();
+
+  for(const el of checked){
+    const tags = getOptionTags(el);
+    // tag counts
+    for(const t of tags){
+      tagCounts.set(t, (tagCounts.get(t) || 0) + 1);
+    }
+    // category counts: max 1 per option per category
+    const cats = optionCategories(tags);
+    for(const c of cats){
+      catCounts.set(c, (catCounts.get(c) || 0) + 1);
+    }
+  }
+
+  renderSidebar(tagCounts, catCounts, checked.length);
+}
+
+function renderSidebar(tagCounts, catCounts, pickedCount){
+  // Header badges
+  document.getElementById("pickedCount").textContent = String(pickedCount);
+  document.getElementById("uniqueTags").textContent = String(tagCounts.size);
+  const activeCats = Array.from(catCounts.values()).filter(v => v > 0).length;
+  document.getElementById("activeCats").textContent = String(activeCats);
+
+  // Categories list (fixed order = as defined)
+  const catList = document.getElementById("catList");
+  catList.innerHTML = "";
+  const catEntries = Object.keys(CATEGORY_MAP).map(name => [name, catCounts.get(name) || 0]);
+
+  const maxCat = Math.max(1, ...catEntries.map(([,v]) => v));
+  for(const [name, val] of catEntries){
+    catList.appendChild(metricRow(name, val, maxCat));
+  }
+
+  // Tags list (top 20)
+  const tagList = document.getElementById("tagList");
+  tagList.innerHTML = "";
+  const tagEntries = Array.from(tagCounts.entries())
+    .sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0], "da"))
+    .slice(0, 20);
+
+  const maxTag = Math.max(1, ...tagEntries.map(([,v]) => v));
+  for(const [name, val] of tagEntries){
+    tagList.appendChild(metricRow(name, val, maxTag));
+  }
+
+  // All tags raw list
+  const allTags = Array.from(tagCounts.entries())
+    .sort((a,b)=> b[1]-a[1] || a[0].localeCompare(b[0], "da"))
+    .map(([k,v]) => `${k}: ${v}`)
+    .join("\n");
+  document.getElementById("allTagsPre").textContent = allTags || "—";
+}
+
+function metricRow(name, val, max){
+  const wrap = document.createElement("div");
+  wrap.className = "metric";
+
+  const left = document.createElement("div");
+  left.style.flex = "1 1 auto";
+
+  const n = document.createElement("div");
+  n.className = "name";
+  n.textContent = name;
+
+  const bar = document.createElement("div");
+  bar.className = "bar";
+  const span = document.createElement("span");
+  const pct = Math.max(0, Math.min(100, (val / max) * 100));
+  span.style.width = pct.toFixed(1) + "%";
+  bar.appendChild(span);
+
+  left.appendChild(n);
+  left.appendChild(bar);
+
+  const right = document.createElement("div");
+  right.className = "val";
+  right.textContent = String(val);
+
+  wrap.appendChild(left);
+  wrap.appendChild(right);
+  return wrap;
+}
+
+// -------- Export / Reset / Print --------
+function collectAnswers(){
+  const data = {};
+  const inputs = Array.from(document.querySelectorAll("input, textarea, select"));
+
+  for(const el of inputs){
+    const type = (el.getAttribute("type") || "").toLowerCase();
+    const name = el.name || el.id;
+    if(!name) continue;
+
+    if(el.classList.contains("tcm") && type === "checkbox"){
+      // handled in separate tcm block
+      continue;
+    }
+
+    if(type === "checkbox"){
+      if(!data[name]) data[name] = [];
+      if(el.checked) data[name].push(el.value || true);
+      continue;
+    }
+
+    if(type === "radio"){
+      if(el.checked) data[name] = el.value;
+      continue;
+    }
+
+    // text / email / tel / number / textarea / select
+    if(el.tagName.toLowerCase() === "select"){
+      data[name] = el.value;
+    } else {
+      data[name] = el.value;
+    }
+  }
+
+  // Add TCM selections
+  const checked = Array.from(document.querySelectorAll('input.tcm[type="checkbox"]:checked'));
+  data.tcm = checked.map(el => ({
+    label: (el.closest(".opt")?.querySelector(".txt")?.childNodes?.[0]?.textContent || "").trim(),
+    tags: getOptionTags(el)
+  }));
+
+  // Add computed counts
+  const tagCounts = new Map();
+  const catCounts = new Map();
+
+  for(const el of checked){
+    const tags = getOptionTags(el);
+    for(const t of tags) tagCounts.set(t, (tagCounts.get(t)||0)+1);
+    const cats = optionCategories(tags);
+    for(const c of cats) catCounts.set(c, (catCounts.get(c)||0)+1);
+  }
+
+  data.counts = {
+    tags: Object.fromEntries(Array.from(tagCounts.entries()).sort((a,b)=>b[1]-a[1])),
+    categories: Object.fromEntries(Object.keys(CATEGORY_MAP).map(k => [k, catCounts.get(k)||0]))
+  };
+
+  return data;
+}
+
+function downloadJSON(obj){
+  const blob = new Blob([JSON.stringify(obj, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "tcm-spoergeskema-svar.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function resetAll(){
+  // reset form controls
+  const inputs = Array.from(document.querySelectorAll("input, textarea, select"));
+  for(const el of inputs){
+    const type = (el.getAttribute("type") || "").toLowerCase();
+    if(type === "checkbox" || type === "radio"){
+      el.checked = false;
+    } else if(el.tagName.toLowerCase() === "select"){
+      el.value = "";
+    } else {
+      el.value = "";
+    }
+  }
+  // reset conditional
+  updateKidsVisibility();
+  recompute();
+}
+
+function updateKidsVisibility(){
+  const kids = document.getElementById("kids");
+  const block = document.getElementById("kidsBlock");
+  const show = kids.value === "Ja";
+  block.style.display = show ? "grid" : "none";
+  block.classList.toggle("conditional", !show);
+}
+
+// -------- Init listeners --------
+document.addEventListener("change", (e) => {
+  const t = e.target;
+  if(t && t.classList && t.classList.contains("tcm")){
+    recompute();
+  }
+  if(t && t.id === "kids"){
+    updateKidsVisibility();
+  }
+});
+
+document.getElementById("btnExport").addEventListener("click", () => {
+  const data = collectAnswers();
+  downloadJSON(data);
+});
+
+document.getElementById("btnReset").addEventListener("click", () => resetAll());
+document.getElementById("btnPrint").addEventListener("click", () => window.print());
+
+// Initial
+updateKidsVisibility();
+recompute();
+</script>
+</body>
+</html>
